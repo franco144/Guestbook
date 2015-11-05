@@ -22,10 +22,14 @@ dependencies {
     // The production code uses the SLF4J logging API at compile time
     compile 'org.slf4j:slf4j-api:1.7.12'
     compile 'org.jooq:jooq:3.6.3'
+    compile 'mysql:mysql-connector-java:5.1.34'
 
     // Declare the dependency for your favourite test framework you want to use in your tests.
     // TestNG is also supported by the Gradle Test task. Just change the
     // testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add
     // 'test.useTestNG()' to your build script.
     testCompile 'junit:junit:4.12'
+
+	// binding for slf4j (Note: only one binding at a time must be specified)
+	runtime 'org.slf4j:slf4j-log4j12:1.7.5'
 }
