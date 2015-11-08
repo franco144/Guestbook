@@ -1,3 +1,9 @@
 /bin
 log4j2.xml
 logger.conf.xml
+/build/
+.gradle
+gradle/
+gradlew
+gradlew.bat
+src/main/java/guestbook/

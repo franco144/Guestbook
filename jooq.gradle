@@ -1,0 +1,53 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'org.jooq:jooq-codegen:3.7.0'
+        classpath 'mysql:mysql-connector-java:5.1.36'
+    }
+}
+
+apply plugin: 'java'
+
+/*
+ * jOOQ task to generate classes from cluster db schema
+ */
+task jooqGenerate << {
+	def writer = new StringWriter()
+	def xml = new groovy.xml.MarkupBuilder(writer)
+	.configuration('xmlns': 'http://www.jooq.org/xsd/jooq-codegen-3.7.0.xsd') {
+		jdbc() {
+			driver('com.mysql.jdbc.Driver')
+			url( "jdbc:mysql://localhost:3306/guestbook" )
+			user( "root" )
+			password( "" )
+		}
+		generator() {
+			database() {
+				name('org.jooq.util.mysql.MySQLDatabase')
+				inputSchema( "guestbook" )
+				unsignedTypes( 'false' )
+				outputSchemaToDefault( 'true' )
+				//excludes( '.*' )
+				//includes( 'super_users|users' )
+				//schemaVersionProvider('SELECT version FROM ' + db_schema_cluster + '.schema_version ORDER BY version_rank DESC LIMIT 1')
+			}
+			generate() {
+			}
+			target() {
+				packageName('guestbook.database.generated')
+				directory( "${rootDir}/src/main/java" )
+			}
+		}
+	}
+
+	//print writer.toString()
+	
+	// Run the code generator
+	org.jooq.util.GenerationTool.generate(
+		javax.xml.bind.JAXB.unmarshal(new StringReader(writer.toString()), org.jooq.util.jaxb.Configuration.class)
+	)
+}

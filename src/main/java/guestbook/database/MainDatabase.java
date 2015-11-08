@@ -5,28 +5,47 @@ import static guestbook.database.generated.tables.Posts.POSTS;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Record5;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
-
-import org.apache.log4j.*;
 
 public class MainDatabase {
 
 	public static void main(String[] args) {
 		try {
 			// firstjOOQTest();
-			inserts();
+			//inserts();
 			//deletes();
+			fetches();
 			
 		} catch (SQLException e) {
 			Logger.getLogger(MainDatabase.class).error("", e);
 		}
 	}
 	
+	private static void fetches() throws SQLException {
+		// fetchMap(AUTHOR.ID)
+		System.out.println("\n\nRESULTS:\n");
+		for( Entry<Long, Record5<Long, String, String, Integer, String>> postEntry 
+				: DatabaseQueries.getPostsComplete().entrySet() ) {
+			System.out.println( "post id:"+ postEntry.getKey() +"\n"+ postEntry.getValue() );
+		}
+
+		// fetchMany() 
+		System.out.println("\n\nCount():\n");
+		System.out.println( DatabaseQueries.getPostsCountPerAuthor() );
+		
+		// fetchMany() 
+		System.out.println("\n\nFetch many:\n");
+		System.out.println( DatabaseQueries.getAuthorsWithAtLeastTwoPubl() );
+	}
+
 	private static void inserts() throws SQLException {
 		System.out.println( "insert. Succeeded ? "+ DatabaseQueries.addPost() );
 		System.out.println( "insert, generated key: "+ DatabaseQueries.addPostGetKey() );
